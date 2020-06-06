@@ -74,6 +74,12 @@ public class ReadMem extends AppCompatActivity {
     {
         MessageDigest digest;
         try {
+            /*
+            CWE-327.326
+            MD5 необходимо заменить на SHA-256. Безопаность MD5 скомпрометирована, необходимо использовать хеш-функция, которая надежней
+            https://cwe.mitre.org/data/definitions/327.html
+			https://cwe.mitre.org/data/definitions/326.html
+            */
             digest = MessageDigest.getInstance("MD5");
             digest.update(s.getBytes(Charset.forName("US-ASCII")), 0, s.length());
             byte[] magnitude = digest.digest();
@@ -83,6 +89,15 @@ public class ReadMem extends AppCompatActivity {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+        /*
+		CWE-780,327
+		Необходимо дописать наличие соответствующих run-time исключений.
+		https://cwe.mitre.org/data/definitions/780.html
+		https://cwe.mitre.org/data/definitions/327.html
+		*/
+			catch (NoSuchPaddingException e) {
+			e.printStackTrace();
+		}
         return "";
     }
 }

@@ -24,7 +24,14 @@ public class SharedPref extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shared_pref);
         setTitle("Info in editor");
+/*
+CWE-312,922
+MODE_WORLD_READABLE не является безопасными настройками приватности.
+Необходимо использовать MODE_PRIVATE, он обеспечивает приватный доступ к данным.
 
+https://cwe.mitre.org/data/definitions/312.html
+https://cwe.mitre.org/data/definitions/922.html
+*/
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_WORLD_READABLE);
         String n = "BCB07BFB7B57E7C786250F6B58515F8BB645C93B112C657FD2E36A640C3F982A";
         SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -68,6 +75,12 @@ public class SharedPref extends AppCompatActivity {
     {
         MessageDigest digest;
         try {
+            /*
+            CWE-327.326
+            MD5 необходимо заменить на SHA-256. Безопаность MD5 скомпрометирована, необходимо использовать хеш-функция, которая надежней
+            https://cwe.mitre.org/data/definitions/327.html
+			https://cwe.mitre.org/data/definitions/326.html
+            */
             digest = MessageDigest.getInstance("MD5");
             digest.update(s.getBytes(Charset.forName("US-ASCII")), 0, s.length());
             byte[] magnitude = digest.digest();
@@ -76,6 +89,15 @@ public class SharedPref extends AppCompatActivity {
             return hash;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+        }
+		/*
+		CWE-780,327
+		Необходимо дописать наличие соответствующих run-time исключений.
+		https://cwe.mitre.org/data/definitions/780.html
+		https://cwe.mitre.org/data/definitions/327.html
+		*/
+			catch (NoSuchPaddingException e) {
+			e.printStackTrace();
         }
         return "";
     }

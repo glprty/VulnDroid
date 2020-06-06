@@ -37,11 +37,28 @@ public class ExternalStorage extends AppCompatActivity {
             String flag="";
             try {
                 flag = AESUtils.decrypt("848158E155106BA380AF0EA25D544A9B74E412283656C6584ED95EF25110B5D6");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            } 				
+        /*
+		CWE-780,327
+		Необходимо дописать наличие соответствующих run-time исключений.
+		https://cwe.mitre.org/data/definitions/780.html
+		https://cwe.mitre.org/data/definitions/327.html
+		*/
+		catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+			catch (NoSuchPaddingException e) {
+			e.printStackTrace();
+		}
 
             FileOutputStream fos;
+            /*
+	   CWE-459
+            В случае закрытия в блоке try,может быть утечка, если будет исключение.
+	    Решение: закрыть файл не в try {}, можно сделать это в finally
+			finally { fos.close();}
+			https://cwe.mitre.org/data/definitions/459.html
+            */
 
             try {
                 fos = new FileOutputStream(file);
@@ -94,6 +111,12 @@ public class ExternalStorage extends AppCompatActivity {
     public static String md5(String s) {
         MessageDigest digest;
         try {
+            /*
+            CWE-327.326
+            MD5 необходимо заменить на SHA-256. Безопаность MD5 скомпрометирована, необходимо использовать хеш-функция, которая надежней
+            https://cwe.mitre.org/data/definitions/327.html
+			https://cwe.mitre.org/data/definitions/326.html
+            */
             digest = MessageDigest.getInstance("MD5");
             digest.update(s.getBytes(Charset.forName("US-ASCII")), 0, s.length());
             byte[] magnitude = digest.digest();
@@ -103,6 +126,16 @@ public class ExternalStorage extends AppCompatActivity {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+        		
+		/*
+		CWE-780,327
+		Необходимо дописать наличие соответствующих run-time исключений.
+		https://cwe.mitre.org/data/definitions/780.html
+		https://cwe.mitre.org/data/definitions/327.html
+		*/
+			catch (NoSuchPaddingException e) {
+			e.printStackTrace();
+		}
         return "";
     }
 
